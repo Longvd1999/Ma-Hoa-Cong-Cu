@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>BỘ PHÁT HÀNH & QUẢN LÝ BẢN QUYỀN GT-DLONG - VŨ ĐỨC LONG</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: #f0f2f5; padding: 25px 20px; color: #333; }
+    .container { max-width: 1050px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+    
+    .card { background: #ffffff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); overflow: hidden; border: 1px solid #e1e4e8; }
+    .header { background: linear-gradient(135deg, #184c78, #0f3050); color: white; padding: 22px 28px; text-align: center; }
+    .header h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; letter-spacing: 0.5px; }
+    .header p { font-size: 13px; color: #b8d2eb; }
+    
+    .body { padding: 24px 28px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+    input[type="text"], select { width: 100%; padding: 10px 12px; font-size: 14px; border: 1.5px solid #d1d5db; border-radius: 6px; outline: none; transition: all 0.2s; }
+    input[type="text"]:focus, select:focus { border-color: #184c78; box-shadow: 0 0 0 3px rgba(24, 76, 120, 0.15); }
+    
+    .btn-gen { width: 100%; padding: 12px; background: #28a745; color: white; font-size: 15px; font-weight: 700; border: none; border-radius: 6px; cursor: pointer; transition: background 0.2s; margin-top: 4px; display: flex; justify-content: center; align-items: center; gap: 8px; }
+    .btn-gen:hover { background: #218838; }
+    
+    .key-box { background: #fffbe6; border: 2px dashed #ffe58f; padding: 16px; border-radius: 8px; margin-top: 20px; display: none; }
+    .key-box.active { display: block; animation: fadeIn 0.3s ease; }
+    .key-text { font-family: "Consolas", monospace; font-size: 18px; font-weight: 700; color: #d9363e; word-break: break-all; text-align: center; margin: 10px 0; }
+    .btn-group { display: flex; gap: 10px; margin-top: 14px; }
+    .btn-action { flex: 1; padding: 10px; font-size: 13px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; color: white; text-align: center; }
+    .btn-copy-key { background: #007bff; }
+    .btn-copy-key:hover { background: #0069d9; }
+    .btn-copy-zalo { background: #6c757d; }
+    .btn-copy-zalo:hover { background: #5a6268; }
+    
+    .alert-toast { display: none; margin-top: 12px; padding: 10px; font-size: 13px; border-radius: 6px; text-align: center; }
+    .alert-toast.success { display: block; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+
+    /* Bang Quan Ly Khach Hang */
+    .manager-card { padding: 24px 28px; }
+    .manager-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; }
+    .manager-title { font-size: 17px; font-weight: 700; color: #184c78; display: flex; align-items: center; gap: 8px; }
+    .manager-actions { display: flex; gap: 8px; }
+    .btn-tool { padding: 8px 12px; font-size: 12px; font-weight: 600; border: 1px solid #d1d5db; background: #f8f9fa; border-radius: 6px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; color: #495057; }
+    .btn-tool:hover { background: #e9ecef; border-color: #adb5bd; }
+    .btn-export { background: #198754; color: white; border-color: #198754; }
+    .btn-export:hover { background: #157347; }
+
+    .search-box { width: 100%; margin-bottom: 16px; padding: 10px 14px; font-size: 14px; border: 1.5px solid #d1d5db; border-radius: 6px; }
+
+    .table-container { width: 100%; overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+    th { background: #f8fafc; padding: 12px 14px; font-weight: 600; color: #475569; border-bottom: 1px solid #e2e8f0; white-space: nowrap; }
+    td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    tr:hover td { background-color: #f8fafc; }
+
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 9999px; font-size: 11px; font-weight: 600; }
+    .badge-life { background: #dcfce7; color: #15803d; }
+    .badge-term { background: #dbeafe; color: #1e40af; }
+    .badge-expired { background: #fee2e2; color: #b91c1c; }
+
+    .btn-mini { padding: 4px 8px; font-size: 11px; font-weight: 600; border-radius: 4px; border: none; cursor: pointer; transition: all 0.2s; }
+    .btn-mini-copy { background: #e0f2fe; color: #0284c7; }
+    .btn-mini-copy:hover { background: #bae6fd; }
+    .btn-mini-del { background: #fef2f2; color: #ef4444; margin-left: 4px; }
+    .btn-mini-del:hover { background: #fee2e2; }
+
+    .empty-state { text-align: center; padding: 36px 20px; color: #94a3b8; font-size: 14px; }
+    
+    .footer { text-align: center; padding: 16px; font-size: 12px; color: #6c757d; border-top: 1px solid #eee; background: #fafafa; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  
+  <!-- Form Tao Key -->
+  <div class="card">
+    <div class="header">
+      <h1>BỘ PHÁT HÀNH BẢN QUYỀN GT-DLONG</h1>
+      <p>Khóa Bản Quyền Theo Bo Mạch Chủ (Hardware-Locked Node License)</p>
+    </div>
+
+    <div class="body">
+      <div class="form-group">
+        <label>1. Mã máy của khách hàng (Hardware ID):</label>
+        <input type="text" id="machCode" placeholder="Ví dụ: DL-757F-CC2F-000C-CB4E" style="font-family: Consolas, monospace; font-weight: 600;">
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>2. Tên khách hàng / Đơn vị:</label>
+          <input type="text" id="clientName" placeholder="Ví dụ: KS. Nguyễn Văn A (Công ty XYZ)">
+        </div>
+
+        <div class="form-group">
+          <label>3. Số điện thoại / Zalo:</label>
+          <input type="text" id="clientPhone" placeholder="Ví dụ: 0912.345.678">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label>4. Thời hạn cấp phép:</label>
+          <select id="licType">
+            <option value="LIFE">Vĩnh viễn (Lifetime - Không thời hạn)</option>
+            <option value="1YEAR">1 Năm (365 Ngày)</option>
+            <option value="6MONTHS">6 Tháng (180 Ngày)</option>
+            <option value="30DAYS">Dùng thử 30 Ngày (Trial)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>5. Ghi chú (Dự án / Thanh toán):</label>
+          <input type="text" id="clientNote" placeholder="Ví dụ: Đã thanh toán full qua Techcombank">
+        </div>
+      </div>
+
+      <button class="btn-gen" onclick="generateLicense()">⚡ TẠO MÃ KÍCH HOẠT & LƯU VÀO DANH SÁCH</button>
+
+      <div id="keyBox" class="key-box">
+        <label style="color: #856404; font-weight: 700;">✔ Mã kích hoạt tương ứng cho máy khách:</label>
+        <div id="resKey" class="key-text"></div>
+        <p id="resDesc" style="font-size: 13px; color: #28a745; text-align: center; margin-bottom: 8px; font-weight: 600;"></p>
+        
+        <div class="btn-group">
+          <button class="btn-action btn-copy-key" onclick="copyKeyOnly()">📋 Copy Chỉ Mã Key</button>
+          <button class="btn-action btn-copy-zalo" onclick="copyZaloMsg()">💬 Copy Tin Nhắn Gửi Zalo Cho Khách</button>
+        </div>
+      </div>
+
+      <div id="toast" class="alert-toast"></div>
+    </div>
+  </div>
+
+  <!-- Bang Quan Ly Danh Sach Khach Hang -->
+  <div class="card manager-card">
+    <div class="manager-header">
+      <div class="manager-title">
+        <span>📋 DANH SÁCH KHÁCH HÀNG ĐÃ CẤP BẢN QUYỀN</span>
+        <span id="customerCount" style="font-size: 13px; font-weight: 600; background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 12px;">0 khách</span>
+      </div>
+      <div class="manager-actions">
+        <button class="btn-tool btn-export" onclick="exportToCSV()">📥 Xuất Excel (.CSV)</button>
+        <button class="btn-tool" onclick="backupJSON()">💾 Sao lưu (JSON)</button>
+        <button class="btn-tool" onclick="document.getElementById('fileInput').click()">📂 Khôi phục</button>
+        <input type="file" id="fileInput" style="display:none" accept=".json" onchange="restoreJSON(event)">
+      </div>
+    </div>
+
+    <input type="text" id="searchBox" class="search-box" placeholder="🔍 Tìm kiếm nhanh theo tên, SĐT, mã máy, ghi chú..." oninput="renderTable()">
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 40px; text-align: center;">STT</th>
+            <th>Khách hàng</th>
+            <th>SĐT / Zalo</th>
+            <th>Mã máy</th>
+            <th>Key kích hoạt</th>
+            <th>Hạn dùng</th>
+            <th>Trạng thái</th>
+            <th style="text-align: center;">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="clientTableBody">
+          <!-- Du lieu tu dong render -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    Bản quyền bộ công cụ thuộc về <strong>Kỹ sư Vũ Đức Long</strong> &copy; 2026 - Dự án GT-DLong
+  </div>
+</div>
+
+<script>
+  const SALT_KEYGEN = "DLONG_KEYGEN_MASTER_KEY_2026_@!";
+  const STORAGE_KEY = "GTDLONG_CUSTOMER_LICENSES_2026";
+
+  function getDLHashBlock(str) {
+    let h1 = 0x811C;
+    let h2 = 0x27D4;
+    let h3 = 0x5F35;
+    let h4 = 0x1A2B;
+    
+    let encoder = new TextEncoder();
+    let bytes = encoder.encode(str);
+    
+    for (let i = 0; i < bytes.length; i++) {
+      let b = bytes[i];
+      h1 = ((h1 * 33) + b + 11) % 65536;
+      h2 = ((h2 * 65) + b + 23) % 65536;
+      h3 = ((h3 * 129) + b + 37) % 65536;
+      h4 = ((h4 * 257) + b + 59) % 65536;
+    }
+    
+    function toHex4(n) {
+      return n.toString(16).toUpperCase().padStart(4, '0');
+    }
+    
+    return `${toHex4(h1)}-${toHex4(h2)}-${toHex4(h3)}-${toHex4(h4)}`;
+  }
+
+  function formatDate(d) {
+    let y = d.getFullYear();
+    let m = String(d.getMonth() + 1).padStart(2, '0');
+    let day = String(d.getDate()).padStart(2, '0');
+    return `${y}${m}${day}`;
+  }
+
+  function formatDateDisplay(d) {
+    let y = d.getFullYear();
+    let m = String(d.getMonth() + 1).padStart(2, '0');
+    let day = String(d.getDate()).padStart(2, '0');
+    return `${day}/${m}/${y}`;
+  }
+
+  let generatedKey = "";
+  let licenseDesc = "";
+  let currentClient = null;
+
+  // Lay danh sach khach hang tu LocalStorage
+  function getClients() {
+    try {
+      let data = localStorage.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch(e) {
+      return [];
+    }
+  }
+
+  function saveClients(list) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    renderTable();
+  }
+
+  function generateLicense() {
+    let machCode = document.getElementById("machCode").value.trim().toUpperCase();
+    if (!machCode) {
+      alert("Vui lòng nhập Mã máy của khách hàng!");
+      document.getElementById("machCode").focus();
+      return;
+    }
+
+    let clientName = document.getElementById("clientName").value.trim() || "Kỹ sư Khách Hàng";
+    let clientPhone = document.getElementById("clientPhone").value.trim() || "-";
+    let clientNote = document.getElementById("clientNote").value.trim() || "";
+    let type = document.getElementById("licType").value;
+    let expTag = "LIFE";
+    let now = new Date();
+    let expDateDisplay = "Vĩnh viễn";
+
+    if (type === "LIFE") {
+      expTag = "LIFE";
+      licenseDesc = "Vĩnh viễn (Lifetime - Không thời hạn)";
+      expDateDisplay = "Vĩnh viễn";
+    } else if (type === "1YEAR") {
+      let exp = new Date(now.getTime() + 365*24*60*60*1000);
+      expTag = formatDate(exp);
+      expDateDisplay = formatDateDisplay(exp);
+      licenseDesc = `Có thời hạn 1 năm (đến ngày ${expDateDisplay})`;
+    } else if (type === "6MONTHS") {
+      let exp = new Date(now.getTime() + 180*24*60*60*1000);
+      expTag = formatDate(exp);
+      expDateDisplay = formatDateDisplay(exp);
+      licenseDesc = `Có thời hạn 6 tháng (đến ngày ${expDateDisplay})`;
+    } else if (type === "30DAYS") {
+      let exp = new Date(now.getTime() + 30*24*60*60*1000);
+      expTag = formatDate(exp);
+      expDateDisplay = formatDateDisplay(exp);
+      licenseDesc = `Dùng thử 30 ngày (đến ngày ${expDateDisplay})`;
+    }
+
+    let payload = `${machCode}#${expTag}#${SALT_KEYGEN}`;
+    let sig = getDLHashBlock(payload);
+    generatedKey = `KEY-${sig}-${expTag}`;
+
+    document.getElementById("resKey").innerText = generatedKey;
+    document.getElementById("resDesc").innerText = "✔ " + licenseDesc;
+    document.getElementById("keyBox").classList.add("active");
+
+    currentClient = {
+      id: Date.now().toString(),
+      name: clientName,
+      phone: clientPhone,
+      note: clientNote,
+      machCode: machCode,
+      key: generatedKey,
+      licType: type,
+      desc: licenseDesc,
+      expDateDisplay: expDateDisplay,
+      createdDate: formatDateDisplay(now)
+    };
+
+    // Luu vao LocalStorage (cap nhat neu da ton tai trung ma may, hoac them moi)
+    let list = getClients();
+    let existingIdx = list.findIndex(c => c.machCode === machCode);
+    if (existingIdx >= 0) {
+      list[existingIdx] = currentClient;
+    } else {
+      list.unshift(currentClient);
+    }
+    saveClients(list);
+    showToast("✔ Đã tạo Key thành công và lưu vào danh sách khách hàng!");
+  }
+
+  function showToast(msg) {
+    let t = document.getElementById("toast");
+    t.innerText = msg;
+    t.className = "alert-toast success";
+    setTimeout(() => { t.className = "alert-toast"; }, 3500);
+  }
+
+  function copyKeyOnly() {
+    if (!generatedKey) return;
+    navigator.clipboard.writeText(generatedKey).then(() => {
+      showToast("✔ Đã copy Mã kích hoạt vào Clipboard!");
+    });
+  }
+
+  function copyZaloMsg() {
+    if (!generatedKey) return;
+    let name = document.getElementById("clientName").value.trim() || "Kỹ sư";
+    let msg = `Kính gửi bạn ${name},\n\nMã kích hoạt bản quyền bộ công cụ GT-DLong cho máy tính của bạn là:\n👉 ${generatedKey}\n\n[*] Loại bản quyền: ${licenseDesc}\n[*] Hướng dẫn kích hoạt: Tại AutoCAD, gõ lệnh NG_LICENSE, dán mã trên vào ô nhập rồi nhấn Enter là xong.\n\nChúc bạn làm việc hiệu quả!\nKỹ sư Vũ Đức Long.`;
+    navigator.clipboard.writeText(msg).then(() => {
+      showToast("✔ Đã copy nội dung tin nhắn Zalo gửi khách!");
+    });
+  }
+
+  function copySpecificKey(key) {
+    navigator.clipboard.writeText(key).then(() => {
+      alert("Đã sao chép Key: " + key);
+    });
+  }
+
+  function copySpecificZalo(id) {
+    let list = getClients();
+    let c = list.find(item => item.id === id);
+    if (!c) return;
+    let msg = `Kính gửi bạn ${c.name},\n\nMã kích hoạt bản quyền bộ công cụ GT-DLong cho máy tính của bạn là:\n👉 ${c.key}\n\n[*] Loại bản quyền: ${c.desc}\n[*] Hướng dẫn kích hoạt: Tại AutoCAD, gõ lệnh NG_LICENSE, dán mã trên vào ô nhập rồi nhấn Enter là xong.\n\nChúc bạn làm việc hiệu quả!\nKỹ sư Vũ Đức Long.`;
+    navigator.clipboard.writeText(msg).then(() => {
+      alert("Đã sao chép tin nhắn Zalo gửi cho khách: " + c.name);
+    });
+  }
+
+  function deleteClient(id) {
+    if (!confirm("Bạn có chắc chắn muốn xóa khách hàng này khỏi danh sách quản lý?")) return;
+    let list = getClients().filter(c => c.id !== id);
+    saveClients(list);
+  }
+
+  function renderTable() {
+    let list = getClients();
+    let query = document.getElementById("searchBox").value.trim().toLowerCase();
+    let tbody = document.getElementById("clientTableBody");
+    document.getElementById("customerCount").innerText = `${list.length} khách`;
+
+    let filtered = list;
+    if (query) {
+      filtered = list.filter(c => 
+        (c.name && c.name.toLowerCase().includes(query)) ||
+        (c.phone && c.phone.toLowerCase().includes(query)) ||
+        (c.machCode && c.machCode.toLowerCase().includes(query)) ||
+        (c.note && c.note.toLowerCase().includes(query)) ||
+        (c.key && c.key.toLowerCase().includes(query))
+      );
+    }
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="8" class="empty-state">Chưa có khách hàng nào được lưu hoặc không khớp tìm kiếm.</td></tr>`;
+      return;
+    }
+
+    let html = "";
+    filtered.forEach((c, idx) => {
+      let badgeClass = c.licType === "LIFE" ? "badge-life" : "badge-term";
+      let badgeText = c.licType === "LIFE" ? "Vĩnh viễn" : "Có thời hạn";
+      
+      html += `
+        <tr>
+          <td style="text-align: center; color: #64748b; font-weight: 600;">${idx + 1}</td>
+          <td>
+            <strong>${c.name}</strong>
+            ${c.note ? `<div style="font-size: 11px; color: #64748b;">📝 ${c.note}</div>` : ""}
+          </td>
+          <td><span style="color: #0284c7; font-weight: 500;">${c.phone || "-"}</span></td>
+          <td><code style="font-size: 12px; color: #334155;">${c.machCode}</code></td>
+          <td><code style="font-size: 12px; font-weight: 700; color: #dc2626;">${c.key}</code></td>
+          <td>${c.expDateDisplay}</td>
+          <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+          <td style="text-align: center; white-space: nowrap;">
+            <button class="btn-mini btn-mini-copy" title="Copy Key" onclick="copySpecificKey('${c.key}')">📋 Key</button>
+            <button class="btn-mini btn-mini-copy" title="Copy tin nhắn Zalo" onclick="copySpecificZalo('${c.id}')">💬 Zalo</button>
+            <button class="btn-mini btn-mini-del" title="Xóa" onclick="deleteClient('${c.id}')">🗑</button>
+          </td>
+        </tr>
+      `;
+    });
+    tbody.innerHTML = html;
+  }
+
+  // Xuat Excel / CSV
+  function exportToCSV() {
+    let list = getClients();
+    if (list.length === 0) {
+      alert("Chưa có dữ liệu khách hàng để xuất Excel!");
+      return;
+    }
+    let csv = "\uFEFFSTT,Khách Hàng,Số Điện Thoại,Mã Máy,Key Bản Quyền,Loại Bản Quyền,Hạn Dùng,Ngày Cấp,Ghi Chú\n";
+    list.forEach((c, i) => {
+      csv += `"${i+1}","${c.name}","${c.phone}","${c.machCode}","${c.key}","${c.licType}","${c.expDateDisplay}","${c.createdDate}","${c.note}"\n`;
+    });
+    let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    let url = URL.createObjectURL(blob);
+    let a = document.createElement("a");
+    a.href = url;
+    a.download = `Danh_Sach_Khach_Hang_GT-DLong_${formatDate(new Date())}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // Backup JSON
+  function backupJSON() {
+    let list = getClients();
+    let dataStr = JSON.stringify(list, null, 2);
+    let blob = new Blob([dataStr], { type: "application/json" });
+    let url = URL.createObjectURL(blob);
+    let a = document.createElement("a");
+    a.href = url;
+    a.download = `Backup_License_GTDLong_${formatDate(new Date())}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // Restore JSON
+  function restoreJSON(e) {
+    let file = e.target.files[0];
+    if (!file) return;
+    let reader = new FileReader();
+    reader.onload = function(evt) {
+      try {
+        let imported = JSON.parse(evt.target.result);
+        if (Array.isArray(imported)) {
+          let current = getClients();
+          // Merge khong trung ma may
+          imported.forEach(item => {
+            if (!current.some(c => c.machCode === item.machCode)) {
+              current.push(item);
+            }
+          });
+          saveClients(current);
+          alert(`Đã khôi phục thành công! Tổng cộng hiện có ${current.length} khách hàng.`);
+        } else {
+          alert("Tệp JSON không đúng định dạng danh sách khách hàng!");
+        }
+      } catch(err) {
+        alert("Lỗi khi đọc file khôi phục!");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  }
+
+  // Khoi tao ban dau
+  window.onload = function() {
+    renderTable();
+  };
+</script>
+
+</body>
+</html>
